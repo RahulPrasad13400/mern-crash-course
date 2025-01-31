@@ -8,7 +8,7 @@ export default function ProductCard({product}) {
     const textColor = useColorModeValue("gray.600", "gray.200")
     const bg = useColorModeValue("white", "gray.800")
     const toast = useToast()
-    const {deleteProduct} = useProductStore()
+    const {deleteProduct, updateProduct } = useProductStore()
     const {isOpen, onOpen, onClose} = useDisclosure()
 
     async function handleDeleteProduct(pid){
@@ -34,6 +34,26 @@ export default function ProductCard({product}) {
 
     async function handleUpdate(pid){
 
+        const {success, message} = await updateProduct(pid, updatedProduct)
+        if(success){
+            toast({
+                title : "Success",
+                description : "product updated sucessfully", 
+                status : 'success',
+                duration : 1000,
+                isClosable : true
+            })
+        }else{
+            toast({
+                title : "Error",
+                description : "failed to update", 
+                status : 'error',
+                duration : 3000,
+                isClosable : true
+            })
+        }
+        onClose()
+
     }
 
     return (
@@ -56,9 +76,9 @@ export default function ProductCard({product}) {
                 <ModalCloseButton />
                 <ModalBody>
                     <VStack spacing={4}>
-                        <Input defaultValue={updatedProduct.name} placeholder='Product Name' name='name' />
-                        <Input placeholder='Price' name='price' />
-                        <Input placeholder='Image Url' name='image' />
+                        <Input defaultValue={updatedProduct.name} placeholder='Product Name' name='name' onChange={(e)=>setUpdatedProduct({...updatedProduct, name : e.target.value})}/>
+                        <Input defaultValue={updatedProduct.price} placeholder='Price' name='price' onChange={(e)=>setUpdatedProduct({...updatedProduct, price : e.target.value})} />
+                        <Input defaultValue={updatedProduct.image} placeholder='Image Url' name='image' onChange={(e)=>setUpdatedProduct({...updatedProduct, image : e.target.value})} />
                     </VStack>
                 </ModalBody>
                 <ModalFooter>
